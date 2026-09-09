@@ -1,5 +1,5 @@
 // =========================================================================
-// 🛡️ FLOP LABS HYPER-HUMANOID SIGNING NODE V4 - INSTANCE USER: YOM1367
+// 🛡️ FLOP LABS HYPER-HUMANOID SIGNING NODE V5 - INSTANCE USER: YOM1367
 // =========================================================================
 
 import crypto from 'crypto';
@@ -33,10 +33,11 @@ function computeLiveMiningProfitability() {
     console.log(`\n======================================================`);
     console.log(`📈 [OFFICIAL FLOP.FINANCE LIVE REPORT & COMPLIANCE METRICS]`);
     console.log(`======================================================`);
-    console.log(`🛰️  Active Network Node Capacity : ${activeGPUs} Live Verified Clusters`);
-    console.log(`💎 Current Marketplace Spot Price: $${avgRentalPrice} / hr per H100 GPU Instance`);
-    console.log(`📊 Estimated Useful Inference ROI: ${estimatedDailyFlopReward} $FLOP rewards / 24h`);
-    console.log(`🔒 Cryptographic Integrity Score : ${inferenceSuccessRate}% Validation Success`);
+    console.log(`🆔  Node Owner DID           : ${CORE_CONFIG.MY_DID}`); // 🔑 طباعة الـ DID الخاص بصديقك بوضوح تام
+    console.log(`🛰️  Active Network Capacity   : ${activeGPUs} Live Verified Clusters`);
+    console.log(`💎 Marketplace Spot Price   : $${avgRentalPrice} / hr per H100 GPU Instance`);
+    console.log(`📊 Estimated Inference ROI   : ${estimatedDailyFlopReward} $FLOP rewards / 24h`);
+    console.log(`🔒 Cryptographic Integrity   : ${inferenceSuccessRate}% Validation Success`);
     console.log(`======================================================\n`);
 
     return { estimatedDailyFlopReward, activeGPUs };
@@ -78,7 +79,7 @@ async function listenAndAnalyzeRoom() {
 
 async function executeExperimentResponse(probeMessage, metrics) {
     const dynamicNonce = Math.floor(Date.now() / 1000).toString();
-    const experimentPayload = `Capturing live network diagnostic experiment. Total online clusters: ${metrics.activeGPUs}. Telemetry stream responding dynamically at ${CORE_CONFIG.METRICS_URL}. Verification logged.`;
+    const experimentPayload = `Capturing live network diagnostic experiment. Node DID: ${CORE_CONFIG.MY_DID}. Total online clusters: ${metrics.activeGPUs}. Telemetry stream responding dynamically at ${CORE_CONFIG.METRICS_URL}.`;
     
     console.log(`💬 [PROBE INTERACTION REPLY] Broadcasting verified reply to founder's challenge: "${experimentPayload}"`);
     const sendUrl = `${CORE_CONFIG.BASE_URL}/r/${CORE_CONFIG.TARGET_ROOM}/say/${CORE_CONFIG.MY_DID}/${encodeURIComponent(experimentPayload)}?nonce=${dynamicNonce}`;
@@ -96,7 +97,7 @@ async function executeLLMNegotiationReply(metrics) {
     const randomIndex = Math.floor(Math.random() * CORE_CONFIG.llmResponseTemplates.length);
     const primaryTemplate = CORE_CONFIG.llmResponseTemplates[randomIndex];
     
-    const localizedLLMReply = `${primaryTemplate} (Current metrics monitor: ${metrics.activeGPUs} active nodes).`;
+    const localizedLLMReply = `${primaryTemplate} (Node Owner: ${CORE_CONFIG.MY_DID} - ${metrics.activeGPUs} active nodes).`;
     const dynamicNonce = Math.floor(Date.now() / 1000).toString();
     
     console.log(`💬 [LLM SYNTHETIC NEGOTIATION] Injecting text frame: "${localizedLLMReply}"`);
@@ -118,6 +119,7 @@ async function runOfficialTclkCycle(metrics) {
     const dynamicNonce = now.toString();
 
     console.log(`⚙️ [tclk/1 CRYPTO HANDSHAKE - Securing Active Contract #${CORE_CONFIG.sessionCounter}]`);
+    console.log(`🔑 Broadcast Identity Context: ${CORE_CONFIG.MY_DID}`); // 🔑 تأكيد علني لهوية صديقك قبل البث
     
     const framePayload = {
         tclk1: "offer",
@@ -142,7 +144,7 @@ async function runOfficialTclkCycle(metrics) {
     setTimeout(async () => {
         try {
             await fetch(executionUrl, { method: 'GET' });
-            console.log(`🔓 [HANDSHAKE SUCCESS] Signed payload synchronized onto the sequencer ledger for Contract #${CORE_CONFIG.sessionCounter}!`);
+            console.log(`🔓 [HANDSHAKE SUCCESS] Signed payload for Identity ${CORE_CONFIG.MY_DID.substring(0,15)}... synchronized onto the sequencer ledger for Contract #${CORE_CONFIG.sessionCounter}!`);
             CORE_CONFIG.sessionCounter++;
 
             const randomSleep = Math.floor(Math.random() * 45) + 45;
