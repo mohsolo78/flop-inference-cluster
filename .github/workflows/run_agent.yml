@@ -1,28 +1,24 @@
-name: Run Official Flop Stealth Agent
+name: Execute Stealth Core Cycle
+
 on:
   schedule:
-    - cron: '35 1,5,10,16,20 * * *' # يعمل 5 مرات يومياً في أوقات مختلفة كلياً عن أوقات حسابك لكسر الارتباط
-  workflow_dispatch:
+    - cron: '0 */4 * * *' # يستيقظ تلقائياً كل 4 ساعات لتشغيل معاملة بشرية عشوائية
+  workflow_dispatch: # يترك لك زر التشغيل اليدوي متاحاً بأي وقت
 
 jobs:
   start-agent:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       - name: Setup Node.js Environment
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v3
         with:
           node-version: '20'
 
       - name: Install Network Dependencies
-        run: |
-          if [ -f package.json ]; then
-            npm install
-          fi
+        run: npm install
 
       - name: Execute Stealth Core Cycle
         run: node index.js
-        env:
-          MY_SECRET_SEED: ${{ secrets.MY_SECRET_SEED }}
