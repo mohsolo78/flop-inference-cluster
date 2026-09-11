@@ -1,38 +1,30 @@
 /**
- * FLOP Ultra-Humanoid Autonomous Inference Cluster
- * Engineered to comply with Technocore Chat HTTP-native standards & 100k FLOP Sonnet Challenge.
- * Anti-Sybil Strategy: Dynamic daily targets (3-5 txs) with highly randomized cooldown intervals.
+ * FLOP Ultra-Humanoid Autonomous Inference Cluster (Serverless Native)
+ * Anti-Sybil Strategy: Execute ONE transaction per epoch, then exit safely to prevent timeouts.
  */
 
-// تم التعديل إلى نظام import لحل مشكلة الـ ES ModuleScope تماماً
 import https from 'https';
+import fs from 'fs';
 
-// الإعدادات الثابتة للمشروع وهويتك الرقمية اللامركزية
 const CONFIG = {
     MY_DID: "did:key:z6MkfiRxeptCFrzzpE9WGtbqmTofdgCLBCfG3U7XxYew46Zk",
     FLOP_FINANCE_API: "https://flop.finance",
     TECHNOCORE_CHAT_URL: "https://technocore.chat",
-    MS_IN_A_DAY: 24 * 60 * 60 * 1000
+    STATE_FILE: './agent_state.json',
+    MAX_DAILY_TX: 4 // المعدل البشري المثالي
 };
 
-// متغيرات ديناميكية لتوليد السلوك البشري
-let dailyTxCount = 0;
-let maxTxForToday = 4; // سيتم تحديده عشوائياً كل يوم بين 3 و 5
-let lastResetTime = Date.now();
-let isCoolingDown = false;
-
-/**
- * دالة لتوليد رقم عشوائي لعدد معاملات اليوم (بين 3 و 5 معاملات)
- */
-function determineTodayQuota() {
-    maxTxForToday = Math.floor(Math.random() * (5 - 3 + 1)) + 3; // يختار 3 أو 4 أو 5
-    console.log(`[Anti-Sybil] Humanoid Profile Generated. Target transactions for the next 24h: ${maxTxForToday}`);
+// تحميل حالة العداد التاريخية لضمان استمراريته عبر فترات الإغلاق
+let state = { dailyTxCount: 0, lastResetTime: Date.now() };
+if (fs.existsSync(CONFIG.STATE_FILE)) {
+    try { state = JSON.parse(fs.readFileSync(CONFIG.STATE_FILE, 'utf8')); } catch (e) {}
 }
 
-/**
- * 1. بروتوكول المصافحة المستمر (TCLK/1 Handshake & ROI Sync)
- */
-function syncFlopMetrics() {
+function saveState() {
+    fs.writeFileSync(CONFIG.STATE_FILE, JSON.stringify(state), 'utf8');
+}
+
+function syncFlopMetrics(callback) {
     https.get(CONFIG.FLOP_FINANCE_API, (res) => {
         let data = '';
         res.on('data', (chunk) => { data += chunk; });
@@ -43,16 +35,12 @@ function syncFlopMetrics() {
             } catch (e) {
                 console.log(`[TCLK/1] Passive handshake holding steady. Status: Healthy`);
             }
+            callback();
         });
-    }).on('error', () => {});
+    }).on('error', () => { callback(); });
 }
 
-/**
- * 2. التفاعل مع تحدي الـ 100k FLOP Sonnet Challenge
- */
 function interactWithSonnetChallenge() {
-    if (isCoolingDown) return;
-
     const actions = ["vote_team_alpha", "vote_winning_agents", "support_creative_agent", "verify_sonnet_meter"];
     const randomAction = actions[Math.floor(Math.random() * actions.length)];
     const url = `${CONFIG.TECHNOCORE_CHAT_URL}?did=${encodeURIComponent(CONFIG.MY_DID)}&msg=${encodeURIComponent(randomAction)}`;
@@ -63,74 +51,43 @@ function interactWithSonnetChallenge() {
         let data = '';
         res.on('data', (chunk) => { data += chunk; });
         res.on('end', () => {
-            dailyTxCount++;
+            state.dailyTxCount++;
             console.log(`[Challenge] Action [${randomAction}] successfully completed under DID.`);
-            console.log(`[Anti-Sybil] Progress today: ${dailyTxCount}/${maxTxForToday}`);
+            console.log(`[Anti-Sybil] Progress today: ${state.dailyTxCount}/${CONFIG.MAX_DAILY_TX}`);
+            saveState();
             
-            // تفعيل التبريد البشري العشوائي فوراً بعد المعاملة
-            triggerHumanoidCooldown();
+            console.log(`[System] Maximum humanoid adaptive transaction limit achieved. Logging out safely.`);
+            console.log(`[System] Entering STEALTH COOLING mode via Workflow boundary. Exiting environment.`);
+            process.exit(0); // خروج آمن لإنهاء الدورة بنجاح في جيتهاب
         });
     }).on('error', (err) => {
-        console.error(`[Challenge] Epoch skipped due to connection refresh.`, err.message);
+        console.error(`[Challenge] Connection failed.`, err.message);
+        process.exit(1);
     });
 }
 
-/**
- * 3. آلية التبريد البشري العشوائي (Humanoid Cooldown)
- * تجعل البوت يختفي تماماً لفترة عشوائية تتراوح بين ساعة إلى 4 ساعات بعد كل معاملة
- */
-function triggerHumanoidCooldown() {
-    isCoolingDown = true;
-    console.log(`[System] Maximum humanoid adaptive transaction limit achieved. Logging out safely.`);
-    
-    // حساب وقت تبريد عشوائي بين ساعة (3600000ms) و 4 ساعات (14400000ms)
-    const randomCooldownMs = Math.floor(Math.random() * (14400000 - 3600000 + 1)) + 3600000;
-    const hours = (randomCooldownMs / (1000 * 60 * 60)).toFixed(2);
-    
-    console.log(`[System] Entering STEALTH COOLING mode. Going dark for the next ${hours} hours to simulate human rest...`);
-    
-    setTimeout(() => {
-        isCoolingDown = false;
-        console.log(`[System] Stealth cooling complete. Agent waking up, session opened.`);
-    }, randomCooldownMs);
-}
-
-/**
- * 4. المحرك الرئيسي الذكي (Humanoid Execution Engine)
- */
-function engineCore() {
-    // إعادة تعيين العداد وتحديث الحصة اليومية عشوائياً كل 24 ساعة
-    if (Date.now() - lastResetTime >= CONFIG.MS_IN_A_DAY) {
-        dailyTxCount = 0;
-        lastResetTime = Date.now();
-        determineTodayQuota();
+function main() {
+    // تصحيح وتصفير العداد بعد مرور 24 ساعة
+    if (Date.now() - state.lastResetTime >= 24 * 60 * 60 * 1000) {
+        state.dailyTxCount = 0;
+        state.lastResetTime = Date.now();
     }
 
-    // مزامنة المؤشرات التقليدية (TCLK/1)
-    syncFlopMetrics();
-
-    // اتخاذ قرار المعاملة بناءً على الحصة اليومية وحالة التبريد
-    if (dailyTxCount < maxTxForToday) {
-        if (!isCoolingDown) {
-            // فرصة عشوائية إضافية عند الاستيقاظ للتأكد من عدم انتظام الوقت
-            if (Math.random() < 0.4) {
+    syncFlopMetrics(() => {
+        if (state.dailyTxCount < CONFIG.CONFIG ? CONFIG.MAX_DAILY_TX : CONFIG.MAX_DAILY_TX) {
+            // إضافة نسبة عشوائية 70% للتحرك البشري لضمان عدم انتظام الفترات
+            if (Math.random() < 0.7) {
                 interactWithSonnetChallenge();
+            } else {
+                console.log(`[Anti-Sybil] Decided to skip this trigger window to mimic true human behavior.`);
+                saveState();
+                process.exit(0);
             }
+        } else {
+            console.log(`[Anti-Sybil] Daily human quota reached. Keeping low profile.`);
+            process.exit(0);
         }
-    } else {
-        console.log(`[Anti-Sybil] Daily human quota reached (${dailyTxCount}/${maxTxForToday}). Keeping low profile until tomorrow.`);
-    }
+    });
 }
 
-// بدء تشغيل النود والمحرك لأول مرة
-console.log(`======================================================`);
-console.log(`STARTING ULTRA-HUMANOID FLOP CLUSTER AGENT`);
-console.log(`ACTIVE DID: ${CONFIG.MY_DID}`);
-console.log(`======================================================`);
-
-determineTodayQuota();
-engineCore();
-
-// الفحص البيئي الدوري كل 20 دقيقة
-const TWENTY_MINUTES = 20 * 60 * 1000;
-setInterval(engineCore, TWENTY_MINUTES);
+main();
