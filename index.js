@@ -4,7 +4,8 @@
  * Anti-Sybil Strategy: Dynamic daily targets (3-5 txs) with highly randomized cooldown intervals.
  */
 
-const https = require('https');
+// تم التعديل إلى نظام import لحل مشكلة الـ ES ModuleScope تماماً
+import https from 'https';
 
 // الإعدادات الثابتة للمشروع وهويتك الرقمية اللامركزية
 const CONFIG = {
