@@ -1,9 +1,10 @@
 name: Execute Stealth Core Cycle
 
 on:
-  schedule:
-    - cron: '0 */4 * * *' # يستيقظ تلقائياً كل 4 ساعات لتشغيل معاملة بشرية عشوائية
-  workflow_dispatch: # يترك لك زر التشغيل اليدوي متاحاً بأي وقت
+  push:
+    branches:
+      - main
+  workflow_dispatch: # يتيح لك زر التشغيل اليدوي (Run workflow) من صفحة Actions بأي وقت
 
 jobs:
   start-agent:
