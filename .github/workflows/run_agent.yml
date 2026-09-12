@@ -1,15 +1,11 @@
 # =========================================================================
-# 🛡️ FLOP LABS HYPER-HUMANOID AGENT RUNNER - PRODUCTION WORKFLOW
+# 🛡️ FLOP LABS HYPER-HUMANOID AGENT RUNNER - PRODUCTION WORKFLOW (FIXED)
 # =========================================================================
 
 name: Run Official Flop Stealth Agent
 
-# إعدادات إطلاق وتشغيل العميل تلقائياً
 on:
-  # يتيح لك تشغيل العميل يدوياً في أي وقت بضغطة زر من واجهة GitHub
   workflow_dispatch:
-  
-  # جدولة تشغيل تلقائية (مثال: يتم تشغيله تلقائياً كل ساعتين على مدار اليوم)
   schedule:
     - cron: '0 */2 * * *'
 
@@ -22,16 +18,14 @@ jobs:
       - name: ⚙️ Set up job
         run: echo "Initializing stealth ecosystem..."
 
-      # التحديث: استخدام v4 لمنع التنبيهات وللتوافق الكامل مع المنصة
       - name: 📁 Checkout Repository Code
         uses: actions/checkout@v4
 
-      # التحديث: تحديث الـ Action إلى v4 واعتماد بيئة Node.js حديثة ومستقرة
+      # تم إصلاح الخطأ هنا عبر إزالة خاصية الكاش (cache) لمنع تعطل المهمة عند غياب ملف القفل
       - name: 🧠 Setup Node.js Environment
         uses: actions/setup-node@v4
         with:
-          node-version: '22' # تم التحديث إلى إصدار مستقر ومدعوم بالكامل لمنع الـ Warning
-          cache: 'npm'
+          node-version: '22'
 
       - name: 📦 Install Network Dependencies
         run: |
@@ -43,10 +37,8 @@ jobs:
             npm install crypto
           fi
 
-      # تنفيذ السكربت الذكي الذي قمنا بتنظيفه وحمايته سابقاً
       - name: 🚀 Execute Stealth Core Cycle
         env:
-          # تمرير مفاتيحك السرية بأمان تام دون كتابتها علناً في الكود
           NODE_MY_DID: ${{ secrets.NODE_MY_DID }}
           MY_SECRET_SEED: ${{ secrets.MY_SECRET_SEED }}
         run: |
