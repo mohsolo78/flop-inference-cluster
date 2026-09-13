@@ -1,61 +1,32 @@
-# =========================================================================
-# 🛡️ FLOP LABS HYPER-HUMANOID AGENT RUNNER - PRODUCTION WORKFLOW (FIXED)
-# =========================================================================
-
 name: Run Official Flop Stealth Agent
 
 on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
   workflow_dispatch:
-  schedule:
-    - cron: '0 */2 * * *'
 
 jobs:
   start-agent:
-    name: start-agent
     runs-on: ubuntu-latest
 
     steps:
-      - name: ⚙️ Set up job
-        run: echo "Initializing stealth ecosystem..."
-
-      - name: 📁 Checkout Repository Code
+      # 1. تحديث الـ Action المسؤول عن سحب الكود لمنع تحذير Node 20 القديم
+      - name: Checkout Repository Code
         uses: actions/checkout@v4
 
-      # تم إصلاح الخطأ هنا عبر إزالة خاصية الكاش (cache) لمنع تعطل المهمة عند غياب ملف القفل
-      - name: 🧠 Setup Node.js Environment
+      # 2. إعداد حاوية تشغيل الـ Node لتطبيقك مع الإبقاء على إصدار 20 لثبات الأداء والتوافق
+      - name: Setup Node.js Environment
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '20' # يُبقي الأداء والذاكرة متطابقين تماماً مع بيئتك الأصلية
+          cache: 'npm'
 
-      - name: 📦 Install Network Dependencies
-        run: |
-          if [ -f package.json ]; then
-            npm install
-          else
-            echo "No package.json found, generating lightweight dependencies..."
-            npm init -y
-            npm install crypto
-          fi
+      # 3. تثبيت الاعتماديات الخاصة بـ Cluster الشبكة
+      - name: Install Network Dependencies
+        run: npm ci
 
-      - name: 🚀 Execute Stealth Core Cycle
-        env:
-          NODE_MY_DID: ${{ secrets.NODE_MY_DID }}
-          MY_SECRET_SEED: ${{ secrets.MY_SECRET_SEED }}
-        run: |
-          if [ -f index.js ]; then
-            node index.js
-          elif [ -f agent.js ]; then
-            node agent.js
-          else
-            echo "Error: Main script file not found! Please ensure your JavaScript file is named index.js or agent.js"
-            exit 1
-          fi
-
-      - name: 🧹 Post Setup Node.js Environment
-        run: echo "Cleaning up runtime temporary buffers..."
-
-      - name: 🔒 Post Checkout Repository Code
-        run: echo "Securing cryptographic session tracks..."
-
-      - name: ✨ Complete job
-        run: echo "Stealth cycle executed and synchronized successfully."
+      # 4. تشغيل الدورة الأساسية للأجنت
+      - name: Execute Stealth Core Cycle
+        run: npm start
