@@ -12,18 +12,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # سحب الكود بإصدار ممتثل لبيئة جيت هاب الجديدة
       - name: Checkout Repository Code
         uses: actions/checkout@v4
 
+      # بيئة النود الافتراضية للـ Action
       - name: Setup Node.js Environment
         uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          # قمنا بإزالة سطر cache: 'npm' لحل مشكلة الـ lock file المفقود نهائياً
 
+      # كود التثبيت القديم والخاص بك تماماً كما كان
       - name: Install Network Dependencies
-        # تم تغيير npm ci إلى npm install لأن npm ci تشترط أيضاً وجود package-lock.json
-        run: npm install
+        run: npm ci
 
+      # كود التشغيل القديم والخاص بك تماماً كما كان
       - name: Execute Stealth Core Cycle
         run: npm start
