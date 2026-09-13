@@ -12,21 +12,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. تحديث الـ Action المسؤول عن سحب الكود لمنع تحذير Node 20 القديم
       - name: Checkout Repository Code
         uses: actions/checkout@v4
 
-      # 2. إعداد حاوية تشغيل الـ Node لتطبيقك مع الإبقاء على إصدار 20 لثبات الأداء والتوافق
       - name: Setup Node.js Environment
         uses: actions/setup-node@v4
         with:
-          node-version: '20' # يُبقي الأداء والذاكرة متطابقين تماماً مع بيئتك الأصلية
-          cache: 'npm'
+          node-version: '20'
+          # قمنا بإزالة سطر cache: 'npm' لحل مشكلة الـ lock file المفقود نهائياً
 
-      # 3. تثبيت الاعتماديات الخاصة بـ Cluster الشبكة
       - name: Install Network Dependencies
-        run: npm ci
+        # تم تغيير npm ci إلى npm install لأن npm ci تشترط أيضاً وجود package-lock.json
+        run: npm install
 
-      # 4. تشغيل الدورة الأساسية للأجنت
       - name: Execute Stealth Core Cycle
         run: npm start
