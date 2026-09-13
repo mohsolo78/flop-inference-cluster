@@ -12,18 +12,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # سحب الكود بإصدار ممتثل لبيئة جيت هاب الجديدة
       - name: Checkout Repository Code
         uses: actions/checkout@v4
 
-      # بيئة النود الافتراضية للـ Action
       - name: Setup Node.js Environment
         uses: actions/setup-node@v4
 
-      # كود التثبيت القديم والخاص بك تماماً كما كان
+      # التثبيت المتوافق مع مشروعك بدون الحاجة لملفات قفل
       - name: Install Network Dependencies
-        run: npm ci
+        run: npm install
 
-      # كود التشغيل القديم والخاص بك تماماً كما كان
+      # التشغيل المباشر للملف الأساسي لتخطي مشكلة السكربت المفقود
       - name: Execute Stealth Core Cycle
-        run: npm start
+        run: node index.js
