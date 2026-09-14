@@ -1,27 +1,42 @@
 name: Run Official Flop Stealth Agent
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+  # 1. تشغيل تلقائي مجدول (كل 12 ساعة) لضمان مزامنة البيانات يومياً
+  schedule:
+    - cron: '0 */12 * * *'
+
+  # 2. الاحتفاظ بميزة التشغيل اليدوي من واجهة GitHub Actions
   workflow_dispatch:
 
 jobs:
-  start-agent:
+  run-stealth-agent:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository Code
+      # الخطوة الأولى: جلب ملفات المستودع
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
+      # الخطوة الثانية: إعداد بيئة تشغيل Node.js بناءً على مشروعك
       - name: Setup Node.js Environment
         uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
 
-      # التثبيت المتوافق مع مشروعك بدون الحاجة لملفات قفل
-      - name: Install Network Dependencies
-        run: npm install
+      # الخطوة الثالثة: تثبيت حزم الاعتماديات (Dependencies) لبروتوكول TCLK/1
+      - name: Install Dependencies
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
 
-      # التشغيل المباشر للملف الأساسي لتخطي مشكلة السكربت المفقود
-      - name: Execute Stealth Core Cycle
-        run: node index.js
+      # الخطوة الرابعة: تشغيل عميل الفحص ومزامنة البيانات الحية لـ flop.finance
+      - name: Execute Flop Inference Cluster Agent
+        env:
+          # إذا كان السكربت يحتاج مفاتيح ربط خاصة (Secrets)، قم بإضافتها في إعدادات Repo واستدعائها هنا:
+          FLOP_TOKEN: ${{ secrets.FLOP_TOKEN }}
+        run: |
+          node index.js
