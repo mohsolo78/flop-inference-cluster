@@ -1,11 +1,11 @@
 name: Run Official Flop Stealth Agent
 
 on:
-  # 1. تشغيل تلقائي مجدول (كل 12 ساعة) لضمان مزامنة البيانات يومياً
+  # 1. تشغيل تلقائي مجدول (كل 12 ساعة)
   schedule:
     - cron: '0 */12 * * *'
 
-  # 2. الاحتفاظ بميزة التشغيل اليدوي من واجهة GitHub Actions
+  # 2. الاحتفاظ بميزة التشغيل اليدوي
   workflow_dispatch:
 
 jobs:
@@ -17,26 +17,18 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # الخطوة الثانية: إعداد بيئة تشغيل Node.js بناءً على مشروعك
+      # الخطوة الثانية: إعداد بيئة تشغيل Node.js بدون خاصية الكاش لتفادي الخطأ
       - name: Setup Node.js Environment
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
 
-      # الخطوة الثالثة: تثبيت حزم الاعتماديات (Dependencies) لبروتوكول TCLK/1
+      # الخطوة الثالثة: تثبيت حزم الاعتماديات بشكل مباشر
       - name: Install Dependencies
-        run: |
-          if [ -f package-lock.json ]; then
-            npm ci
-          else
-            npm install
-          fi
+        run: npm install
 
-      # الخطوة الرابعة: تشغيل عميل الفحص ومزامنة البيانات الحية لـ flop.finance
+      # الخطوة الرابعة: تشغيل عميل الفحص
       - name: Execute Flop Inference Cluster Agent
         env:
-          # إذا كان السكربت يحتاج مفاتيح ربط خاصة (Secrets)، قم بإضافتها في إعدادات Repo واستدعائها هنا:
           FLOP_TOKEN: ${{ secrets.FLOP_TOKEN }}
-        run: |
-          node index.js
+        run: node index.js
