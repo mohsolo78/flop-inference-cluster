@@ -27,8 +27,9 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      # الخطوة الرابعة: تشغيل عميل الفحص ومزامنة البيانات
+      # الخطوة الرابعة: تشغيل عميل الفحص ومزامنة البيانات الحية وتمرير المفتاح السري
       - name: Execute Flop Inference Cluster Agent
         env:
           FLOP_TOKEN: ${{ secrets.FLOP_TOKEN }}
+          MY_SECRET_SEED: ${{ secrets.MY_SECRET_SEED }} # <--- تم ربط وتفعيل مفتاحك السري هنا بنجاح
         run: node index.js
