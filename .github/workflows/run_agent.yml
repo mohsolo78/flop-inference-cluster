@@ -17,17 +17,17 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # الخطوة الثانية: إعداد بيئة تشغيل Node.js بدون خاصية الكاش لتفادي الخطأ
+      # الخطوة الثانية: إعداد بيئة تشغيل Node.js وترقيتها إلى الإصدار 24
       - name: Setup Node.js Environment
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
 
       # الخطوة الثالثة: تثبيت حزم الاعتماديات بشكل مباشر
       - name: Install Dependencies
         run: npm install
 
-      # الخطوة الرابعة: تشغيل عميل الفحص
+      # الخطوة الرابعة: تشغيل عميل الفحص ومزامنة البيانات
       - name: Execute Flop Inference Cluster Agent
         env:
           FLOP_TOKEN: ${{ secrets.FLOP_TOKEN }}
